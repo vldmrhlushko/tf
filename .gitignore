@@ -1,0 +1,7 @@
+.terraform/
+*.tfstate
+*.tfstate.*
+terraform.tfvars
+flux_key
+*.key
+*.pem
