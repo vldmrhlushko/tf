@@ -1,3 +1,7 @@
 output "FLUX_GITHUB_TARGET_PATH" {
   value = var.FLUX_GITHUB_TARGET_PATH
 }
+
+output "kubeconfig" {
+  value = "${path.module}/kubeconfig"
+}

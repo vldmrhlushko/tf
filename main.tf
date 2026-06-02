@@ -1,3 +1,17 @@
+# Configure the Google Cloud provider
+provider "google" {
+  # The GCP project to use
+  project = var.GOOGLE_PROJECT
+  # The GCP region to deploy resources in
+  region  = var.GOOGLE_REGION
+}
+
+# Configure the GitHub provider
+provider "github" {
+  token = var.GITHUB_TOKEN
+  owner = var.GITHUB_OWNER
+}
+
 module "github_repository" {
   source                   = "github.com/den-vasyliev/tf-github-repository"
   github_owner             = var.GITHUB_OWNER
@@ -11,8 +25,8 @@ module "gke_cluster" {
   source         = "github.com/den-vasyliev/tf-google-gke-cluster"
   GOOGLE_REGION  = var.GOOGLE_REGION
   GOOGLE_PROJECT = var.GOOGLE_PROJECT
-  GKE_NUM_NODES  = 2
-  GKE_MACHINE_TYPE = "e2-medium"
+  GKE_NUM_NODES  = 3
+  GKE_MACHINE_TYPE = "e2-standard-2"
 }
 
 module "tls_private_key" {
@@ -35,9 +49,7 @@ resource "local_file" "kubeconfig" {
   filename = "${path.module}/kubeconfig"
 }
 
-output "kubeconfig" {
-  value = "${path.module}/kubeconfig"
-}
+
 
 
 module "flux_bootstrap" {
@@ -45,7 +57,5 @@ module "flux_bootstrap" {
   github_repository = "${var.GITHUB_OWNER}/${var.FLUX_GITHUB_REPO}"
   github_token      = var.GITHUB_TOKEN
   private_key       = module.tls_private_key.private_key_pem
-  config_path = module.gke_cluster.kubeconfig
-###  config_path = local_file.kubeconfig.filename
+  config_path       = local_file.kubeconfig.filename
 }
-
